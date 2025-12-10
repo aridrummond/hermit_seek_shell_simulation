@@ -1,527 +1,511 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hermit Crab Shell Search Simulator</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Hermit Crab Shell Search Simulator&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/@babel/standalone/babel.min.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="root"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"&gt;&lt;/script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script type="text/babel"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const { useState, useEffect, useRef } = React;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const { Play, Pause, RotateCcw, Shuffle } = lucide;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const HermitCrabSimulation = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const canvasRef = useRef(null);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [isRunning, setIsRunning] = useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [crabSize, setCrabSize] = useState(10);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [numShells, setNumShells] = useState(15);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [dispersion, setDispersion] = useState(50);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [memory, setMemory] = useState(5);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [elapsedTime, setElapsedTime] = useState(0);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [isComplete, setIsComplete] = useState(false);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [shellChanges, setShellChanges] = useState(0);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [changeHistory, setChangeHistory] = useState([]);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [totalRuns, setTotalRuns] = useState(0);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [crabName, setCrabName] = useState('');</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const [pathLength, setPathLength] = useState(0);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const simRef = useRef(null);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const startTimeRef = useRef(null);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>const animationFrameRef = useRef(null);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>useEffect(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const canvas = canvasRef.current;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!canvas) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const ctx = canvas.getContext('2d');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const width = canvas.width;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const height = canvas.height;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function generateShellSize(type, crabSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (type === 'optimal') return crabSize * (0.97 + Math.random() * 0.06);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else if (type === 'too-large') return crabSize * (1.2 + Math.random() * 0.8);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else return crabSize * (0.2 + Math.random() * 0.6);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function generateShells(count, dispersionValue, crabSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const shells = [];</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const minDistance = 5;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const tooLargeCount = Math.floor((count - 1) / 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const tooSmallCount = count - 1 - tooLargeCount;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>let shellTypes = ['optimal'];</p>
-<p class="p1"><span class="Apple-converted-space">              </span>for (let i = 0; i &lt; tooLargeCount; i++) shellTypes.push('too-large');</p>
-<p class="p1"><span class="Apple-converted-space">              </span>for (let i = 0; i &lt; tooSmallCount; i++) shellTypes.push('too-small');</p>
-<p class="p1"><span class="Apple-converted-space">              </span>for (let i = shellTypes.length - 1; i &gt; 0; i--) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const j = Math.floor(Math.random() * (i + 1));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>[shellTypes[i], shellTypes[j]] = [shellTypes[j], shellTypes[i]];</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p2"><span class="Apple-converted-space">              </span></p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (dispersionValue &lt; 33) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const centerX = width / 2, centerY = height / 2, clusterRadius = 100;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>for (let i = 0; i &lt; count; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>let placed = false, attempts = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>while (!placed &amp;&amp; attempts &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const angle = Math.random() * Math.PI * 2, dist = Math.random() * clusterRadius;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const x = centerX + Math.cos(angle) * dist, y = centerY + Math.sin(angle) * dist;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const size = generateShellSize(shellTypes[i], crabSize);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const shellScreenSize = (size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (x &gt;= shellScreenSize &amp;&amp; x &lt;= width - shellScreenSize &amp;&amp; y &gt;= shellScreenSize &amp;&amp; y &lt;= height - shellScreenSize) {</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>let overlaps = false;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>for (let shell of shells) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (dist &lt; (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>if (!overlaps) { shells.push({ x, y, size, id: i, timesInvestigated: 0 }); placed = true; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>attempts++;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>} else if (dispersionValue &gt; 66) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>for (let i = 0; i &lt; count; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>let placed = false, attempts = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>while (!placed &amp;&amp; attempts &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const size = generateShellSize(shellTypes[i], crabSize);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const shellScreenSize = (size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const x = shellScreenSize + Math.random() * (width - 2 * shellScreenSize);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const y = shellScreenSize + Math.random() * (height - 2 * shellScreenSize);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let overlaps = false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>for (let shell of shells) {</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>if (dist &lt; (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (!overlaps) { shells.push({ x, y, size, id: i, timesInvestigated: 0 }); placed = true; }</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>attempts++;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const numClusters = Math.floor(2 + Math.random() * 3);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const shellsPerCluster = Math.ceil(count / numClusters);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let shellIndex = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>for (let c = 0; c &lt; numClusters &amp;&amp; shellIndex &lt; count; c++) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const centerX = 100 + Math.random() * (width - 200);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const centerY = 100 + Math.random() * (height - 200);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const clusterRadius = 30 + Math.random() * 70;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>for (let i = 0; i &lt; shellsPerCluster &amp;&amp; shellIndex &lt; count; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let placed = false, attempts = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>while (!placed &amp;&amp; attempts &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const angle = Math.random() * Math.PI * 2, dist = Math.random() * clusterRadius;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const x = centerX + Math.cos(angle) * dist, y = centerY + Math.sin(angle) * dist;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const size = generateShellSize(shellTypes[shellIndex], crabSize);</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>const shellScreenSize = (size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>if (x &gt;= shellScreenSize &amp;&amp; x &lt;= width - shellScreenSize &amp;&amp; y &gt;= shellScreenSize &amp;&amp; y &lt;= height - shellScreenSize) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>let overlaps = false;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>for (let shell of shells) {</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">                          </span>if (dist &lt; (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (!overlaps) { shells.push({ x, y, size, id: shellIndex, timesInvestigated: 0 }); placed = true; shellIndex++; }</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>attempts++;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>return shells;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function init() {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const shells = generateShells(numShells, dispersion, crabSize);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const screenSize = (crabSize * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>let startX, startY, validPosition = false, attempts = 0;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const minDistance = screenSize * 5;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>while (!validPosition &amp;&amp; attempts &lt; 100) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>startX = screenSize * 3 + Math.random() * (width - screenSize * 6);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>startY = screenSize * 3 + Math.random() * (height - screenSize * 6);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>validPosition = true;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>for (let shell of shells) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const dx = shell.x - startX, dy = shell.y - startY, dist = Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>if (dist &lt; minDistance) { validPosition = false; break; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>attempts++;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (!validPosition) { startX = width / 2; startY = height / 2; }</p>
-<p class="p1"><span class="Apple-converted-space">              </span>return {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>shells,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab: {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>x: startX, y: startY, optimalSize: crabSize, screenSize, currentShellSize: crabSize * 0.8,</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>angle: Math.random() * Math.PI * 2, speed: 2.5 - (crabSize / 20) * 1.5, wanderAngle: 0,</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>state: 'exploring', currentTarget: null, lastInvestigated: null, assessmentTime: 0,</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>assessmentDuration: 0, detectionRange: 800, investigatedShells: {}, shellChanges: 0,</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>lastChangeType: null, pathLength: 0, lastX: startX, lastY: startY</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>};</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!simRef.current) simRef.current = init();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function getShellColor(shell, crabSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const fitDiff = Math.abs(shell.size - crabSize) / crabSize;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (fitDiff &lt;= 0.05) return '#22c55e';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else if (shell.size &lt; crabSize) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const intensity = Math.min(Math.abs(fitDiff) * 2, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return `rgb(239, ${Math.floor(68 + (1 - intensity) * 150)}, ${Math.floor(68 + (1 - intensity) * 150)})`;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const intensity = Math.min(Math.abs(fitDiff) * 2, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return `rgb(${Math.floor(56 + (1 - intensity) * 150)}, ${Math.floor(189 + (1 - intensity) * 50)}, ${Math.floor(248 + (1 - intensity) * 7)})`;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function getCurrentShellColor(currentShellSize, optimalSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const fitDiff = Math.abs(currentShellSize - optimalSize) / optimalSize;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (fitDiff &lt;= 0.05) return '#22c55e';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else if (currentShellSize &lt; optimalSize) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const intensity = Math.min(Math.abs(fitDiff) * 2, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return `rgb(239, ${Math.floor(68 + (1 - intensity) * 150)}, ${Math.floor(68 + (1 - intensity) * 150)})`;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const intensity = Math.min(Math.abs(fitDiff) * 2, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>return `rgb(${Math.floor(56 + (1 - intensity) * 150)}, ${Math.floor(189 + (1 - intensity) * 50)}, ${Math.floor(248 + (1 - intensity) * 7)})`;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function drawShell(ctx, shell, crabSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const shellScreenSize = (shell.size * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const chemicalStrength = shellScreenSize * 1.8;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const gradient = ctx.createRadialGradient(shell.x, shell.y, 0, shell.x, shell.y, chemicalStrength);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>gradient.addColorStop(0, 'rgba(147, 51, 234, 0.15)');</p>
-<p class="p1"><span class="Apple-converted-space">              </span>gradient.addColorStop(1, 'rgba(147, 51, 234, 0)');</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = gradient;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(shell.x, shell.y, chemicalStrength, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = getShellColor(shell, crabSize);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(shell.x, shell.y, shellScreenSize * 0.6, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(shell.x + shellScreenSize * 0.2, shell.y, shellScreenSize * 0.3, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function detectChemicals(crab, shells, memoryLevel) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>let strongestShell = null, maxStrength = 0;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>for (let shell of shells) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const timesVisited = crab.investigatedShells[shell.id] || 0;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (timesVisited &gt; 0 &amp;&amp; Math.random() &gt; 1 - ((memoryLevel - 1) / 9)) continue;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const dx = shell.x - crab.x, dy = shell.y - crab.y, dist = Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const perceivedStrength = shell.size / (1 + (dist * dist) / 10000);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (perceivedStrength &gt; maxStrength &amp;&amp; dist &gt; 5) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>maxStrength = perceivedStrength;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>strongestShell = { shell, strength: perceivedStrength, distance: dist };</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>return strongestShell;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function calculateAssessmentTime(shellSize, optimalSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const fitDiff = Math.abs(shellSize - optimalSize) / optimalSize;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (fitDiff &lt;= 0.1) return 600;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else if (fitDiff &gt;= 0.5) return 300;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>else return Math.floor((10 - (5 * ((fitDiff - 0.1) / 0.4))) * 60);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function shouldSwitch(currentSize, newSize, optimalSize) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>return Math.abs(newSize - optimalSize) &lt; Math.abs(currentSize - optimalSize);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function updateCrab(crab, shells) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (crab.state === 'exploring') {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const detected = detectChemicals(crab, shells, memory);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let chemotaxisBias = 0, targetAngle = crab.angle;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (detected &amp;&amp; detected.shell !== crab.lastInvestigated) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const dx = detected.shell.x - crab.x, dy = detected.shell.y - crab.y, dist = detected.distance;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>if (dist &lt; 20) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.currentTarget = detected.shell;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.state = 'assessing';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.assessmentTime = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.investigatedShells[detected.shell.id] = (crab.investigatedShells[detected.shell.id] || 0) + 1;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let baseTime = calculateAssessmentTime(detected.shell.size, crab.optimalSize);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (detected.shell.timesInvestigated &gt; 0) baseTime = Math.floor(baseTime * 0.5);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.assessmentDuration = baseTime;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>detected.shell.timesInvestigated++;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return 'running';</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>chemotaxisBias = Math.min(detected.strength / 50, 1);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>targetAngle = Math.atan2(dy, dx);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (chemotaxisBias &gt; 0.01) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const angleDiff = targetAngle - crab.angle;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.angle += normalizedDiff * (0.05 + chemotaxisBias * 0.25);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const randomness = 1 - chemotaxisBias;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.wanderAngle += (Math.random() - 0.5) * 0.5 * randomness;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.wanderAngle = Math.max(-0.5, Math.min(0.5, crab.wanderAngle)) * randomness;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.angle += crab.wanderAngle * 0.1;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.wanderAngle += (Math.random() - 0.5) * 0.6;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.wanderAngle = Math.max(-1, Math.min(1, crab.wanderAngle));</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.angle += crab.wanderAngle * 0.2;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const newX = crab.x + Math.cos(crab.angle) * crab.speed;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const newY = crab.y + Math.sin(crab.angle) * crab.speed;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const dx = newX - crab.lastX, dy = newY - crab.lastY;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab.pathLength += Math.sqrt(dx * dx + dy * dy);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab.lastX = crab.x; crab.lastY = crab.y;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const margin = crab.screenSize;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (newX &lt; margin || newX &gt; width - margin) { crab.angle = Math.PI - crab.angle; crab.wanderAngle = 0; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (newY &lt; margin || newY &gt; height - margin) { crab.angle = -crab.angle; crab.wanderAngle = 0; }</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab.x = Math.max(margin, Math.min(width - margin, newX));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab.y = Math.max(margin, Math.min(height - margin, newY));</p>
-<p class="p1"><span class="Apple-converted-space">              </span>} else if (crab.state === 'assessing') {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>crab.assessmentTime++;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if (crab.assessmentTime &gt;= crab.assessmentDuration) {</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const oldSize = crab.currentShellSize;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>if (shouldSwitch(crab.currentShellSize, crab.currentTarget.size, crab.optimalSize)) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.currentShellSize = crab.currentTarget.size;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.shellChanges++;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>const fitDiff = Math.abs(crab.currentShellSize - crab.optimalSize) / crab.optimalSize;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>let changeType = fitDiff &lt;= 0.05 ? 'optimal' : crab.currentShellSize &gt; oldSize ? 'larger' : 'smaller';</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.lastChangeType = changeType;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>setChangeHistory(prev =&gt; [...prev, changeType]);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>setShellChanges(crab.shellChanges);</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>if (Math.abs(crab.currentShellSize - crab.optimalSize) / crab.optimalSize &lt;= 0.05) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>setPathLength(crab.pathLength);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>return 'complete';</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.lastInvestigated = crab.currentTarget;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const dx = crab.x - crab.currentTarget.x, dy = crab.y - crab.currentTarget.y;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.angle = Math.sqrt(dx * dx + dy * dy) &lt; 1 ? Math.random() * Math.PI * 2 : Math.atan2(dy, dx) + (Math.random() - 0.5) * Math.PI / 3;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.state = 'exploring';</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.currentTarget = null;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.wanderAngle = 0;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>for (let i = 0; i &lt; 10; i++) {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.x += Math.cos(crab.angle) * crab.speed;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>crab.y += Math.sin(crab.angle) * crab.speed;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>const margin = crab.screenSize;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.x = Math.max(margin, Math.min(width - margin, crab.x));</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>crab.y = Math.max(margin, Math.min(height - margin, crab.y));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>return 'running';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function drawCrab(ctx, crab) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const currentShellScreenSize = (crab.currentShellSize * 0.625 + 1.25) * 3.78;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = getCurrentShellColor(crab.currentShellSize, crab.optimalSize);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(crab.x, crab.y, currentShellScreenSize * 0.5, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (crab.lastChangeType) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.strokeStyle = crab.lastChangeType === 'optimal' ? '#22c55e' : crab.lastChangeType === 'larger' ? '#38bdf8' : '#ef4444';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.lineWidth = 3;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.moveTo(crab.x - currentShellScreenSize * 0.4, crab.y);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.lineTo(crab.x + currentShellScreenSize * 0.4, crab.y);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#f97316';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(crab.x, crab.y, crab.screenSize * 0.6, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const clawAngle1 = crab.angle - Math.PI / 4, clawAngle2 = crab.angle + Math.PI / 4;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.strokeStyle = '#ea580c';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.lineWidth = Math.max(2, crab.screenSize * 0.15);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.moveTo(crab.x, crab.y);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.lineTo(crab.x + Math.cos(clawAngle1) * crab.screenSize, crab.y + Math.sin(clawAngle1) * crab.screenSize);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.moveTo(crab.x, crab.y);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.lineTo(crab.x + Math.cos(clawAngle2) * crab.screenSize, crab.y + Math.sin(clawAngle2) * crab.screenSize);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#000';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const eyeOffset = crab.screenSize * 0.4, eyeSize = Math.max(2, crab.screenSize * 0.1);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(crab.x + Math.cos(crab.angle - 0.3) * eyeOffset, crab.y + Math.sin(crab.angle - 0.3) * eyeOffset, eyeSize, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.arc(crab.x + Math.cos(crab.angle + 0.3) * eyeOffset, crab.y + Math.sin(crab.angle + 0.3) * eyeOffset, eyeSize, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fill();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (crab.state === 'assessing') {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.strokeStyle = '#fbbf24';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.lineWidth = 3;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.arc(crab.x, crab.y, crab.screenSize * 1.3, 0, Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const progress = crab.assessmentTime / crab.assessmentDuration;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.strokeStyle = '#22c55e';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.arc(crab.x, crab.y, crab.screenSize * 1.3, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>function animate() {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (!isRunning) return;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#0f172a';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillRect(0, 0, width, height);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const { shells, crab } = simRef.current;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (startTimeRef.current) setElapsedTime((Date.now() - startTimeRef.current) / 1000);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>const status = updateCrab(crab, shells);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (status === 'complete') { setIsRunning(false); setIsComplete(true); }</p>
-<p class="p1"><span class="Apple-converted-space">              </span>shells.forEach(shell =&gt; drawShell(ctx, shell, crabSize));</p>
-<p class="p1"><span class="Apple-converted-space">              </span>drawCrab(ctx, crab);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#fff';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.font = 'bold 20px monospace';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText(`Time: ${elapsedTime.toFixed(2)}s`, 10, 25);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.font = '12px monospace';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText(`State: ${crab.state}`, 10, 45);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText(`Shell fit: ${((crab.currentShellSize - crab.optimalSize) / crab.optimalSize * 100).toFixed(1)}%`, 10, 60);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText(`Shell changes: ${crab.shellChanges}`, 10, 75);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#22c55e';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillRect(width - 140, 8, 15, 15);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#fff';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText('Optimal', width - 120, 20);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#38bdf8';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillRect(width - 140, 28, 15, 15);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#fff';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText('Too large', width - 120, 40);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#ef4444';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillRect(width - 140, 48, 15, 15);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillStyle = '#fff';</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText('Too small', width - 120, 60);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>ctx.fillText('Shell changes:', width - 140, 85);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>let tallyX = width - 140, tallyY = 100;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>changeHistory.forEach((changeType, index) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.strokeStyle = changeType === 'optimal' ? '#22c55e' : changeType === 'larger' ? '#38bdf8' : '#ef4444';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.lineWidth = 2;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.beginPath();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.moveTo(tallyX + (index % 10) * 8, tallyY);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.lineTo(tallyX + (index % 10) * 8, tallyY + 10);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.stroke();</p>
-<p class="p1"><span class="Apple-converted-space">                </span>if ((index + 1) % 10 === 0) tallyY += 15;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>});</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (isComplete) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillRect(0, 0, width, height);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillStyle = '#22c55e';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.font = 'bold 40px monospace';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.textAlign = 'center';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillText('OPTIMAL SHELL FOUND!', width / 2, height / 2);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.font = 'bold 28px monospace';</p>
-<p class="p1"><span class="Apple-converted-space">                </span>ctx.fillText(`Time: ${elapsedTime.toFixed(2)}s`, width / 2, height / 2 + 45);</p>
-<p class="p1"><span class="Apple-converted-space">              </span>}</p>
-<p class="p1"><span class="Apple-converted-space">              </span>animationFrameRef.current = requestAnimationFrame(animate);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (isRunning) {</p>
-<p class="p1"><span class="Apple-converted-space">              </span>if (!startTimeRef.current) startTimeRef.current = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">              </span>animate();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">            </span>return () =&gt; { if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current); };</p>
-<p class="p1"><span class="Apple-converted-space">          </span>}, [isRunning, crabSize, numShells, dispersion, memory, elapsedTime, isComplete, changeHistory]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>const handleStart = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!simRef.current) handleReset();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>startTimeRef.current = Date.now();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setElapsedTime(0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setIsComplete(false);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setIsRunning(true);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setTotalRuns(prev =&gt; prev + 1);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>const handleReset = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const canvas = canvasRef.current;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!canvas) return;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const ctx = canvas.getContext('2d');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>ctx.fillStyle = '#0f172a';</p>
-<p class="p1"><span class="Apple-converted-space">            </span>ctx.fillRect(0, 0, canvas.width, canvas.height);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>simRef.current = null;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>startTimeRef.current = null;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setElapsedTime(0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setIsComplete(false);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setShellChanges(0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setChangeHistory([]);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setPathLength(0);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setIsRunning(false);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>const handleRandomize = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setCrabSize(Math.floor(Math.random() * 20) + 1);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setNumShells(Math.floor(Math.random() * 26) + 5);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setDispersion(Math.floor(Math.random() * 101));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setMemory(Math.floor(Math.random() * 10) + 1);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>setTimeout(handleReset, 100);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>const handleSaveData = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!crabName.trim()) { alert('Please enter a crab name before saving!'); return; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const now = new Date();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const csvContent = `Crab Name,Date,Time,Duration (s),Shell Changes,Path Length,Crab Size,Number of Shells,Dispersion,Memory\n${crabName},${now.toLocaleDateString('en-US')},${now.toLocaleTimeString('en-US')},${elapsedTime.toFixed(2)},${shellChanges},${pathLength.toFixed(2)},${crabSize},${numShells},${dispersion},${memory}`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const link = document.createElement('a');</p>
-<p class="p1"><span class="Apple-converted-space">            </span>link.href = URL.createObjectURL(blob);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>link.download = `hermit_crab_${crabName.replace(/\s+/g, '_')}_${Date.now()}.csv`;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>link.click();</p>
-<p class="p1"><span class="Apple-converted-space">          </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">          </span>return (</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div className="w-full min-h-screen bg-slate-900 flex items-center justify-center p-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;div className="bg-slate-800 rounded-lg shadow-2xl p-6 max-w-5xl w-full"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;h1 className="text-2xl font-bold text-white mb-4"&gt;Hermit Crab Shell Search Simulator&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;canvas ref={canvasRef} width={900} height={600} className="w-full border-2 border-slate-700 rounded mb-4" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div className="space-y-4"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div className="flex gap-2 flex-wrap"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={handleStart} disabled={isRunning} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"&gt;&lt;Play size={16} /&gt; Start&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={() =&gt; setIsRunning(false)} disabled={!isRunning} className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 text-white rounded transition-colors"&gt;&lt;Pause size={16} /&gt; Pause&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={handleReset} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"&gt;&lt;RotateCcw size={16} /&gt; Reset&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button onClick={handleRandomize} className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"&gt;&lt;Shuffle size={16} /&gt; Randomize&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div className="bg-slate-700 p-3 rounded"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label className="text-white text-sm mb-2 block"&gt;Name Your Crab:&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div className="flex gap-2"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;input type="text" value={crabName} onChange={(e) =&gt; setCrabName(e.target.value)} placeholder="Enter crab name" className="flex-1 px-3 py-2 bg-slate-600 text-white rounded border border-slate-500" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                      </span>&lt;button onClick={handleSaveData} disabled={!isComplete} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 text-white rounded transition-colors"&gt;Save Data&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div className="text-white text-sm bg-slate-700 p-2 rounded"&gt;&lt;p&gt;Total Simulations Run: {totalRuns}&lt;/p&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;div className="space-y-3"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;&lt;label className="text-white text-sm mb-1 block"&gt;Crab Size: {crabSize} ({(crabSize * 0.625 + 1.25).toFixed(1)}mm)&lt;/label&gt;&lt;input type="range" min="1" max="20" step="1" value={crabSize} onChange={(e) =&gt; { setCrabSize(parseFloat(e.target.value)); handleReset(); }} className="w-full" /&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;&lt;label className="text-white text-sm mb-1 block"&gt;Number of Shells: {numShells}&lt;/label&gt;&lt;input type="range" min="5" max="30" step="1" value={numShells} onChange={(e) =&gt; { setNumShells(parseInt(e.target.value)); handleReset(); }} className="w-full" /&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;&lt;label className="text-white text-sm mb-1 block"&gt;Dispersion: {dispersion &lt; 33 ? 'Clumped' : dispersion &lt; 67 ? 'Moderate' : 'Dispersed'}&lt;/label&gt;&lt;input type="range" min="0" max="100" step="1" value={dispersion} onChange={(e) =&gt; { setDispersion(parseInt(e.target.value)); handleReset(); }} className="w-full" /&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;&lt;label className="text-white text-sm mb-1 block"&gt;Memory: {memory} {memory === 1 ? '(revisits)' : memory === 10 ? '(never revisits)' : ''}&lt;/label&gt;&lt;input type="range" min="1" max="10" step="1" value={memory} onChange={(e) =&gt; setMemory(parseInt(e.target.value))} className="w-full" /&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div className="mt-4 text-sm text-slate-300 space-y-1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;p&gt;• Crab starts 80% of optimal size, 5 body lengths from nearest shell&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;p&gt;• Shell distribution: ~50% too large (blue), ~50% too small (red), 1 optimal (green)&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;p&gt;• Investigation time: 10s for good fits (90-110%), 5s for bad fits (≥50%)&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;p&gt;• Memory: controls revisitation (1=always, 10=never)&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                  </span>&lt;p&gt;• Chemotaxis: larger shells emit stronger chemical signals&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">              </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>ReactDOM.createRoot(document.getElementById('root')).render(&lt;HermitCrabSimulation /&gt;);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+    <div id="root"></div>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { Play, Pause, RotateCcw, Shuffle } = lucide;
+
+        const HermitCrabSimulation = () => {
+          const canvasRef = useRef(null);
+          const [isRunning, setIsRunning] = useState(false);
+          const [crabSize, setCrabSize] = useState(10);
+          const [numShells, setNumShells] = useState(15);
+          const [dispersion, setDispersion] = useState(50);
+          const [memory, setMemory] = useState(5);
+          const [elapsedTime, setElapsedTime] = useState(0);
+          const [isComplete, setIsComplete] = useState(false);
+          const [shellChanges, setShellChanges] = useState(0);
+          const [changeHistory, setChangeHistory] = useState([]);
+          const [totalRuns, setTotalRuns] = useState(0);
+          const [crabName, setCrabName] = useState('');
+          const [pathLength, setPathLength] = useState(0);
+          const simRef = useRef(null);
+          const startTimeRef = useRef(null);
+          const animationFrameRef = useRef(null);
+
+          useEffect(() => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            function generateShellSize(type, crabSize) {
+              if (type === 'optimal') return crabSize * (0.97 + Math.random() * 0.06);
+              else if (type === 'too-large') return crabSize * (1.2 + Math.random() * 0.8);
+              else return crabSize * (0.2 + Math.random() * 0.6);
+            }
+
+            function generateShells(count, dispersionValue, crabSize) {
+              const shells = [];
+              const minDistance = 5;
+              const tooLargeCount = Math.floor((count - 1) / 2);
+              const tooSmallCount = count - 1 - tooLargeCount;
+              let shellTypes = ['optimal'];
+              for (let i = 0; i < tooLargeCount; i++) shellTypes.push('too-large');
+              for (let i = 0; i < tooSmallCount; i++) shellTypes.push('too-small');
+              for (let i = shellTypes.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shellTypes[i], shellTypes[j]] = [shellTypes[j], shellTypes[i]];
+              }
+              
+              if (dispersionValue < 33) {
+                const centerX = width / 2, centerY = height / 2, clusterRadius = 100;
+                for (let i = 0; i < count; i++) {
+                  let placed = false, attempts = 0;
+                  while (!placed && attempts < 100) {
+                    const angle = Math.random() * Math.PI * 2, dist = Math.random() * clusterRadius;
+                    const x = centerX + Math.cos(angle) * dist, y = centerY + Math.sin(angle) * dist;
+                    const size = generateShellSize(shellTypes[i], crabSize);
+                    const shellScreenSize = (size * 0.625 + 1.25) * 3.78;
+                    if (x >= shellScreenSize && x <= width - shellScreenSize && y >= shellScreenSize && y <= height - shellScreenSize) {
+                      let overlaps = false;
+                      for (let shell of shells) {
+                        const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);
+                        const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;
+                        if (dist < (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }
+                      }
+                      if (!overlaps) { shells.push({ x, y, size, id: i, timesInvestigated: 0 }); placed = true; }
+                    }
+                    attempts++;
+                  }
+                }
+              } else if (dispersionValue > 66) {
+                for (let i = 0; i < count; i++) {
+                  let placed = false, attempts = 0;
+                  while (!placed && attempts < 100) {
+                    const size = generateShellSize(shellTypes[i], crabSize);
+                    const shellScreenSize = (size * 0.625 + 1.25) * 3.78;
+                    const x = shellScreenSize + Math.random() * (width - 2 * shellScreenSize);
+                    const y = shellScreenSize + Math.random() * (height - 2 * shellScreenSize);
+                    let overlaps = false;
+                    for (let shell of shells) {
+                      const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);
+                      const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;
+                      if (dist < (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }
+                    }
+                    if (!overlaps) { shells.push({ x, y, size, id: i, timesInvestigated: 0 }); placed = true; }
+                    attempts++;
+                  }
+                }
+              } else {
+                const numClusters = Math.floor(2 + Math.random() * 3);
+                const shellsPerCluster = Math.ceil(count / numClusters);
+                let shellIndex = 0;
+                for (let c = 0; c < numClusters && shellIndex < count; c++) {
+                  const centerX = 100 + Math.random() * (width - 200);
+                  const centerY = 100 + Math.random() * (height - 200);
+                  const clusterRadius = 30 + Math.random() * 70;
+                  for (let i = 0; i < shellsPerCluster && shellIndex < count; i++) {
+                    let placed = false, attempts = 0;
+                    while (!placed && attempts < 100) {
+                      const angle = Math.random() * Math.PI * 2, dist = Math.random() * clusterRadius;
+                      const x = centerX + Math.cos(angle) * dist, y = centerY + Math.sin(angle) * dist;
+                      const size = generateShellSize(shellTypes[shellIndex], crabSize);
+                      const shellScreenSize = (size * 0.625 + 1.25) * 3.78;
+                      if (x >= shellScreenSize && x <= width - shellScreenSize && y >= shellScreenSize && y <= height - shellScreenSize) {
+                        let overlaps = false;
+                        for (let shell of shells) {
+                          const dx = shell.x - x, dy = shell.y - y, dist = Math.sqrt(dx * dx + dy * dy);
+                          const otherScreenSize = (shell.size * 0.625 + 1.25) * 3.78;
+                          if (dist < (shellScreenSize + otherScreenSize) * 0.6 + minDistance) { overlaps = true; break; }
+                        }
+                        if (!overlaps) { shells.push({ x, y, size, id: shellIndex, timesInvestigated: 0 }); placed = true; shellIndex++; }
+                      }
+                      attempts++;
+                    }
+                  }
+                }
+              }
+              return shells;
+            }
+
+            function init() {
+              const shells = generateShells(numShells, dispersion, crabSize);
+              const screenSize = (crabSize * 0.625 + 1.25) * 3.78;
+              let startX, startY, validPosition = false, attempts = 0;
+              const minDistance = screenSize * 5;
+              while (!validPosition && attempts < 100) {
+                startX = screenSize * 3 + Math.random() * (width - screenSize * 6);
+                startY = screenSize * 3 + Math.random() * (height - screenSize * 6);
+                validPosition = true;
+                for (let shell of shells) {
+                  const dx = shell.x - startX, dy = shell.y - startY, dist = Math.sqrt(dx * dx + dy * dy);
+                  if (dist < minDistance) { validPosition = false; break; }
+                }
+                attempts++;
+              }
+              if (!validPosition) { startX = width / 2; startY = height / 2; }
+              return {
+                shells,
+                crab: {
+                  x: startX, y: startY, optimalSize: crabSize, screenSize, currentShellSize: crabSize * 0.8,
+                  angle: Math.random() * Math.PI * 2, speed: 2.5 - (crabSize / 20) * 1.5, wanderAngle: 0,
+                  state: 'exploring', currentTarget: null, lastInvestigated: null, assessmentTime: 0,
+                  assessmentDuration: 0, detectionRange: 800, investigatedShells: {}, shellChanges: 0,
+                  lastChangeType: null, pathLength: 0, lastX: startX, lastY: startY
+                }
+              };
+            }
+
+            if (!simRef.current) simRef.current = init();
+
+            function getShellColor(shell, crabSize) {
+              const fitDiff = Math.abs(shell.size - crabSize) / crabSize;
+              if (fitDiff <= 0.05) return '#22c55e';
+              else if (shell.size < crabSize) {
+                const intensity = Math.min(Math.abs(fitDiff) * 2, 1);
+                return `rgb(239, ${Math.floor(68 + (1 - intensity) * 150)}, ${Math.floor(68 + (1 - intensity) * 150)})`;
+              } else {
+                const intensity = Math.min(Math.abs(fitDiff) * 2, 1);
+                return `rgb(${Math.floor(56 + (1 - intensity) * 150)}, ${Math.floor(189 + (1 - intensity) * 50)}, ${Math.floor(248 + (1 - intensity) * 7)})`;
+              }
+            }
+
+            function getCurrentShellColor(currentShellSize, optimalSize) {
+              const fitDiff = Math.abs(currentShellSize - optimalSize) / optimalSize;
+              if (fitDiff <= 0.05) return '#22c55e';
+              else if (currentShellSize < optimalSize) {
+                const intensity = Math.min(Math.abs(fitDiff) * 2, 1);
+                return `rgb(239, ${Math.floor(68 + (1 - intensity) * 150)}, ${Math.floor(68 + (1 - intensity) * 150)})`;
+              } else {
+                const intensity = Math.min(Math.abs(fitDiff) * 2, 1);
+                return `rgb(${Math.floor(56 + (1 - intensity) * 150)}, ${Math.floor(189 + (1 - intensity) * 50)}, ${Math.floor(248 + (1 - intensity) * 7)})`;
+              }
+            }
+
+            function drawShell(ctx, shell, crabSize) {
+              const shellScreenSize = (shell.size * 0.625 + 1.25) * 3.78;
+              const chemicalStrength = shellScreenSize * 1.8;
+              const gradient = ctx.createRadialGradient(shell.x, shell.y, 0, shell.x, shell.y, chemicalStrength);
+              gradient.addColorStop(0, 'rgba(147, 51, 234, 0.15)');
+              gradient.addColorStop(1, 'rgba(147, 51, 234, 0)');
+              ctx.fillStyle = gradient;
+              ctx.beginPath();
+              ctx.arc(shell.x, shell.y, chemicalStrength, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = getShellColor(shell, crabSize);
+              ctx.beginPath();
+              ctx.arc(shell.x, shell.y, shellScreenSize * 0.6, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+              ctx.beginPath();
+              ctx.arc(shell.x + shellScreenSize * 0.2, shell.y, shellScreenSize * 0.3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+
+            function detectChemicals(crab, shells, memoryLevel) {
+              let strongestShell = null, maxStrength = 0;
+              for (let shell of shells) {
+                const timesVisited = crab.investigatedShells[shell.id] || 0;
+                if (timesVisited > 0 && Math.random() > 1 - ((memoryLevel - 1) / 9)) continue;
+                const dx = shell.x - crab.x, dy = shell.y - crab.y, dist = Math.sqrt(dx * dx + dy * dy);
+                const perceivedStrength = shell.size / (1 + (dist * dist) / 10000);
+                if (perceivedStrength > maxStrength && dist > 5) {
+                  maxStrength = perceivedStrength;
+                  strongestShell = { shell, strength: perceivedStrength, distance: dist };
+                }
+              }
+              return strongestShell;
+            }
+
+            function calculateAssessmentTime(shellSize, optimalSize) {
+              const fitDiff = Math.abs(shellSize - optimalSize) / optimalSize;
+              if (fitDiff <= 0.1) return 600;
+              else if (fitDiff >= 0.5) return 300;
+              else return Math.floor((10 - (5 * ((fitDiff - 0.1) / 0.4))) * 60);
+            }
+
+            function shouldSwitch(currentSize, newSize, optimalSize) {
+              return Math.abs(newSize - optimalSize) < Math.abs(currentSize - optimalSize);
+            }
+
+            function updateCrab(crab, shells) {
+              if (crab.state === 'exploring') {
+                const detected = detectChemicals(crab, shells, memory);
+                let chemotaxisBias = 0, targetAngle = crab.angle;
+                if (detected && detected.shell !== crab.lastInvestigated) {
+                  const dx = detected.shell.x - crab.x, dy = detected.shell.y - crab.y, dist = detected.distance;
+                  if (dist < 20) {
+                    crab.currentTarget = detected.shell;
+                    crab.state = 'assessing';
+                    crab.assessmentTime = 0;
+                    crab.investigatedShells[detected.shell.id] = (crab.investigatedShells[detected.shell.id] || 0) + 1;
+                    let baseTime = calculateAssessmentTime(detected.shell.size, crab.optimalSize);
+                    if (detected.shell.timesInvestigated > 0) baseTime = Math.floor(baseTime * 0.5);
+                    crab.assessmentDuration = baseTime;
+                    detected.shell.timesInvestigated++;
+                    return 'running';
+                  } else {
+                    chemotaxisBias = Math.min(detected.strength / 50, 1);
+                    targetAngle = Math.atan2(dy, dx);
+                  }
+                }
+                if (chemotaxisBias > 0.01) {
+                  const angleDiff = targetAngle - crab.angle;
+                  const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
+                  crab.angle += normalizedDiff * (0.05 + chemotaxisBias * 0.25);
+                  const randomness = 1 - chemotaxisBias;
+                  crab.wanderAngle += (Math.random() - 0.5) * 0.5 * randomness;
+                  crab.wanderAngle = Math.max(-0.5, Math.min(0.5, crab.wanderAngle)) * randomness;
+                  crab.angle += crab.wanderAngle * 0.1;
+                } else {
+                  crab.wanderAngle += (Math.random() - 0.5) * 0.6;
+                  crab.wanderAngle = Math.max(-1, Math.min(1, crab.wanderAngle));
+                  crab.angle += crab.wanderAngle * 0.2;
+                }
+                const newX = crab.x + Math.cos(crab.angle) * crab.speed;
+                const newY = crab.y + Math.sin(crab.angle) * crab.speed;
+                const dx = newX - crab.lastX, dy = newY - crab.lastY;
+                crab.pathLength += Math.sqrt(dx * dx + dy * dy);
+                crab.lastX = crab.x; crab.lastY = crab.y;
+                const margin = crab.screenSize;
+                if (newX < margin || newX > width - margin) { crab.angle = Math.PI - crab.angle; crab.wanderAngle = 0; }
+                if (newY < margin || newY > height - margin) { crab.angle = -crab.angle; crab.wanderAngle = 0; }
+                crab.x = Math.max(margin, Math.min(width - margin, newX));
+                crab.y = Math.max(margin, Math.min(height - margin, newY));
+              } else if (crab.state === 'assessing') {
+                crab.assessmentTime++;
+                if (crab.assessmentTime >= crab.assessmentDuration) {
+                  const oldSize = crab.currentShellSize;
+                  if (shouldSwitch(crab.currentShellSize, crab.currentTarget.size, crab.optimalSize)) {
+                    crab.currentShellSize = crab.currentTarget.size;
+                    crab.shellChanges++;
+                    const fitDiff = Math.abs(crab.currentShellSize - crab.optimalSize) / crab.optimalSize;
+                    let changeType = fitDiff <= 0.05 ? 'optimal' : crab.currentShellSize > oldSize ? 'larger' : 'smaller';
+                    crab.lastChangeType = changeType;
+                    setChangeHistory(prev => [...prev, changeType]);
+                    setShellChanges(crab.shellChanges);
+                  }
+                  if (Math.abs(crab.currentShellSize - crab.optimalSize) / crab.optimalSize <= 0.05) {
+                    setPathLength(crab.pathLength);
+                    return 'complete';
+                  }
+                  crab.lastInvestigated = crab.currentTarget;
+                  const dx = crab.x - crab.currentTarget.x, dy = crab.y - crab.currentTarget.y;
+                  crab.angle = Math.sqrt(dx * dx + dy * dy) < 1 ? Math.random() * Math.PI * 2 : Math.atan2(dy, dx) + (Math.random() - 0.5) * Math.PI / 3;
+                  crab.state = 'exploring';
+                  crab.currentTarget = null;
+                  crab.wanderAngle = 0;
+                  for (let i = 0; i < 10; i++) {
+                    crab.x += Math.cos(crab.angle) * crab.speed;
+                    crab.y += Math.sin(crab.angle) * crab.speed;
+                  }
+                  const margin = crab.screenSize;
+                  crab.x = Math.max(margin, Math.min(width - margin, crab.x));
+                  crab.y = Math.max(margin, Math.min(height - margin, crab.y));
+                }
+              }
+              return 'running';
+            }
+
+            function drawCrab(ctx, crab) {
+              const currentShellScreenSize = (crab.currentShellSize * 0.625 + 1.25) * 3.78;
+              ctx.fillStyle = getCurrentShellColor(crab.currentShellSize, crab.optimalSize);
+              ctx.beginPath();
+              ctx.arc(crab.x, crab.y, currentShellScreenSize * 0.5, 0, Math.PI * 2);
+              ctx.fill();
+              if (crab.lastChangeType) {
+                ctx.strokeStyle = crab.lastChangeType === 'optimal' ? '#22c55e' : crab.lastChangeType === 'larger' ? '#38bdf8' : '#ef4444';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(crab.x - currentShellScreenSize * 0.4, crab.y);
+                ctx.lineTo(crab.x + currentShellScreenSize * 0.4, crab.y);
+                ctx.stroke();
+              }
+              ctx.fillStyle = '#f97316';
+              ctx.beginPath();
+              ctx.arc(crab.x, crab.y, crab.screenSize * 0.6, 0, Math.PI * 2);
+              ctx.fill();
+              const clawAngle1 = crab.angle - Math.PI / 4, clawAngle2 = crab.angle + Math.PI / 4;
+              ctx.strokeStyle = '#ea580c';
+              ctx.lineWidth = Math.max(2, crab.screenSize * 0.15);
+              ctx.beginPath();
+              ctx.moveTo(crab.x, crab.y);
+              ctx.lineTo(crab.x + Math.cos(clawAngle1) * crab.screenSize, crab.y + Math.sin(clawAngle1) * crab.screenSize);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.moveTo(crab.x, crab.y);
+              ctx.lineTo(crab.x + Math.cos(clawAngle2) * crab.screenSize, crab.y + Math.sin(clawAngle2) * crab.screenSize);
+              ctx.stroke();
+              ctx.fillStyle = '#000';
+              const eyeOffset = crab.screenSize * 0.4, eyeSize = Math.max(2, crab.screenSize * 0.1);
+              ctx.beginPath();
+              ctx.arc(crab.x + Math.cos(crab.angle - 0.3) * eyeOffset, crab.y + Math.sin(crab.angle - 0.3) * eyeOffset, eyeSize, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.arc(crab.x + Math.cos(crab.angle + 0.3) * eyeOffset, crab.y + Math.sin(crab.angle + 0.3) * eyeOffset, eyeSize, 0, Math.PI * 2);
+              ctx.fill();
+              if (crab.state === 'assessing') {
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(crab.x, crab.y, crab.screenSize * 1.3, 0, Math.PI * 2);
+                ctx.stroke();
+                const progress = crab.assessmentTime / crab.assessmentDuration;
+                ctx.strokeStyle = '#22c55e';
+                ctx.beginPath();
+                ctx.arc(crab.x, crab.y, crab.screenSize * 1.3, -Math.PI / 2, -Math.PI / 2 + progress * Math.PI * 2);
+                ctx.stroke();
+              }
+            }
+
+            function animate() {
+              if (!isRunning) return;
+              ctx.fillStyle = '#0f172a';
+              ctx.fillRect(0, 0, width, height);
+              const { shells, crab } = simRef.current;
+              if (startTimeRef.current) setElapsedTime((Date.now() - startTimeRef.current) / 1000);
+              const status = updateCrab(crab, shells);
+              if (status === 'complete') { setIsRunning(false); setIsComplete(true); }
+              shells.forEach(shell => drawShell(ctx, shell, crabSize));
+              drawCrab(ctx, crab);
+              ctx.fillStyle = '#fff';
+              ctx.font = 'bold 20px monospace';
+              ctx.fillText(`Time: ${elapsedTime.toFixed(2)}s`, 10, 25);
+              ctx.font = '12px monospace';
+              ctx.fillText(`State: ${crab.state}`, 10, 45);
+              ctx.fillText(`Shell fit: ${((crab.currentShellSize - crab.optimalSize) / crab.optimalSize * 100).toFixed(1)}%`, 10, 60);
+              ctx.fillText(`Shell changes: ${crab.shellChanges}`, 10, 75);
+              ctx.fillStyle = '#22c55e';
+              ctx.fillRect(width - 140, 8, 15, 15);
+              ctx.fillStyle = '#fff';
+              ctx.fillText('Optimal', width - 120, 20);
+              ctx.fillStyle = '#38bdf8';
+              ctx.fillRect(width - 140, 28, 15, 15);
+              ctx.fillStyle = '#fff';
+              ctx.fillText('Too large', width - 120, 40);
+              ctx.fillStyle = '#ef4444';
+              ctx.fillRect(width - 140, 48, 15, 15);
+              ctx.fillStyle = '#fff';
+              ctx.fillText('Too small', width - 120, 60);
+              ctx.fillText('Shell changes:', width - 140, 85);
+              let tallyX = width - 140, tallyY = 100;
+              changeHistory.forEach((changeType, index) => {
+                ctx.strokeStyle = changeType === 'optimal' ? '#22c55e' : changeType === 'larger' ? '#38bdf8' : '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(tallyX + (index % 10) * 8, tallyY);
+                ctx.lineTo(tallyX + (index % 10) * 8, tallyY + 10);
+                ctx.stroke();
+                if ((index + 1) % 10 === 0) tallyY += 15;
+              });
+              if (isComplete) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#22c55e';
+                ctx.font = 'bold 40px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('OPTIMAL SHELL FOUND!', width / 2, height / 2);
+                ctx.font = 'bold 28px monospace';
+                ctx.fillText(`Time: ${elapsedTime.toFixed(2)}s`, width / 2, height / 2 + 45);
+              }
+              animationFrameRef.current = requestAnimationFrame(animate);
+            }
+
+            if (isRunning) {
+              if (!startTimeRef.current) startTimeRef.current = Date.now();
+              animate();
+            }
+
+            return () => { if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current); };
+          }, [isRunning, crabSize, numShells, dispersion, memory, elapsedTime, isComplete, changeHistory]);
+
+          const handleStart = () => {
+            if (!simRef.current) handleReset();
+            startTimeRef.current = Date.now();
+            setElapsedTime(0);
+            setIsComplete(false);
+            setIsRunning(true);
+            setTotalRuns(prev => prev + 1);
+          };
+
+          const handleReset = () => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            simRef.current = null;
+            startTimeRef.current = null;
+            setElapsedTime(0);
+            setIsComplete(false);
+            setShellChanges(0);
+            setChangeHistory([]);
+            setPathLength(0);
+            setIsRunning(false);
+          };
+
+          const handleRandomize = () => {
+            setCrabSize(Math.floor(Math.random() * 20) + 1);
+            setNumShells(Math.floor(Math.random() * 26) + 5);
+            setDispersion(Math.floor(Math.random() * 101));
+            setMemory(Math.floor(Math.random() * 10) + 1);
+            setTimeout(handleReset, 100);
+          };
+
+          const handleSaveData = () => {
+            if (!crabName.trim()) { alert('Please enter a crab name before saving!'); return; }
+            const now = new Date();
+            const csvContent = `Crab Name,Date,Time,Duration (s),Shell Changes,Path Length,Crab Size,Number of Shells,Dispersion,Memory\n${crabName},${now.toLocaleDateString('en-US')},${now.toLocaleTimeString('en-US')},${elapsedTime.toFixed(2)},${shellChanges},${pathLength.toFixed(2)},${crabSize},${numShells},${dispersion},${memory}`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `hermit_crab_${crabName.replace(/\s+/g, '_')}_${Date.now()}.csv`;
+            link.click();
+          };
+
+          return (
+            <div className="w-full min-h-screen bg-slate-900 flex items-center justify-center p-4">
+              <div className="bg-slate-800 rounded-lg shadow-2xl p-6 max-w-5xl w-full">
+                <h1 className="text-2xl font-bold text-white mb-4">Hermit Crab Shell Search Simulator</h1>
+                <canvas ref={canvasRef} width={900} height={600} className="w-full border-2 border-slate-700 rounded mb-4" />
+                <div className="space-y-4">
+                  <div className="flex gap-2 flex-wrap">
+                    <button onClick={handleStart} disabled={isRunning} className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"><Play size={16} /> Start</button>
+                    <button onClick={() => setIsRunning(false)} disabled={!isRunning} className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 text-white rounded transition-colors"><Pause size={16} /> Pause</button>
+                    <button onClick={handleReset} className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"><RotateCcw size={16} /> Reset</button>
+                    <button onClick={handleRandomize} className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"><Shuffle size={16} /> Randomize</button>
+                  </div>
+                  <div className="bg-slate-700 p-3 rounded">
+                    <label className="text-white text-sm mb-2 block">Name Your Crab:</label>
+                    <div className="flex gap-2">
+                      <input type="text" value={crabName} onChange={(e) => setCrabName(e.target.value)} placeholder="Enter crab name" className="flex-1 px-3 py-2 bg-slate-600 text-white rounded border border-slate-500" />
+                      <button onClick={handleSaveData} disabled={!isComplete} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 text-white rounded transition-colors">Save Data</button>
+                    </div>
+                  </div>
+                  <div className="text-white text-sm bg-slate-700 p-2 rounded"><p>Total Simulations Run: {totalRuns}</p></div>
+                  <div className="space-y-3">
+                    <div><label className="text-white text-sm mb-1 block">Crab Size: {crabSize} ({(crabSize * 0.625 + 1.25).toFixed(1)}mm)</label><input type="range" min="1" max="20" step="1" value={crabSize} onChange={(e) => { setCrabSize(parseFloat(e.target.value)); handleReset(); }} className="w-full" /></div>
+                    <div><label className="text-white text-sm mb-1 block">Number of Shells: {numShells}</label><input type="range" min="5" max="30" step="1" value={numShells} onChange={(e) => { setNumShells(parseInt(e.target.value)); handleReset(); }} className="w-full" /></div>
+                    <div><label className="text-white text-sm mb-1 block">Dispersion: {dispersion < 33 ? 'Clumped' : dispersion < 67 ? 'Moderate' : 'Dispersed'}</label><input type="range" min="0" max="100" step="1" value={dispersion} onChange={(e) => { setDispersion(parseInt(e.target.value)); handleReset(); }} className="w-full" /></div>
+                    <div><label className="text-white text-sm mb-1 block">Memory: {memory} {memory === 1 ? '(revisits)' : memory === 10 ? '(never revisits)' : ''}</label><input type="range" min="1" max="10" step="1" value={memory} onChange={(e) => setMemory(parseInt(e.target.value))} className="w-full" /></div>
+                  </div>
+                </div>
+                <div className="mt-4 text-sm text-slate-300 space-y-1">
+                  <p>• Crab starts 80% of optimal size, 5 body lengths from nearest shell</p>
+                  <p>• Shell distribution: ~50% too large (blue), ~50% too small (red), 1 optimal (green)</p>
+                  <p>• Investigation time: 10s for good fits (90-110%), 5s for bad fits (≥50%)</p>
+                  <p>• Memory: controls revisitation (1=always, 10=never)</p>
+                  <p>• Chemotaxis: larger shells emit stronger chemical signals</p>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<HermitCrabSimulation />);
+    </script>
 </body>
 </html>
